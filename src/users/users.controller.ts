@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
 
 interface User {
   id: string;
@@ -21,18 +21,8 @@ export class UsersController {
     },
     {
       id: '3',
-      name: 'Marcela Garcia',
-      email: 'marcela@correo.com',
-    },
-    {
-      id: '4',
-      name: 'Marcela Garcia',
-      email: 'marcela@correo.com',
-    },
-    {
-      id: '5',
-      name: 'Marcela Garcia',
-      email: 'marcela@correo.com',
+      name: 'Shalom',
+      email: 'shaloma@correo.com',
     },
   ];
 
@@ -50,5 +40,30 @@ export class UsersController {
       };
     }
     return user;
+  }
+
+  @Post()
+  createUser(@Body() body: User) {
+    this.users.push(body);
+    return {
+      message: 'User created',
+      body: {
+        ...body,
+      },
+    };
+  }
+
+  @Delete(':id')
+  deleteUser(@Param('id') id: string) {
+    const position: number = this.users.findIndex((user) => user.id === id);
+    if (position === -1) {
+      return {
+        error: 'User not found',
+      };
+    }
+    this.users.splice(position, 1);
+    return {
+      message: 'User deleted',
+    };
   }
 }
