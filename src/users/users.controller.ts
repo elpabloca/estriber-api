@@ -24,6 +24,16 @@ export class UsersController {
       name: 'Marcela Garcia',
       email: 'marcela@correo.com',
     },
+    {
+      id: '4',
+      name: 'Marcela Garcia',
+      email: 'marcela@correo.com',
+    },
+    {
+      id: '5',
+      name: 'Marcela Garcia',
+      email: 'marcela@correo.com',
+    },
   ];
 
   @Get()
