@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Put, Param, Body } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 interface User {
@@ -35,6 +35,7 @@ export class UsersController {
   @Get(':id')
   findUser(@Param('id') id: string) {
     const user = this.users.find((user) => user.id === id);
+    console.log(user, 'user');
     if (!user) {
       return {
         error: 'User not found',
@@ -68,5 +69,24 @@ export class UsersController {
     return {
       message: 'User deleted',
     };
+  }
+
+  @Put(':id')
+  updateUser(@Param('id') id: string, @Body() body: Omit<User, 'id'>) {
+    const position: number = this.users.findIndex((user) => user.id === id);
+    console.log(body);
+    if (position === -1) {
+      return {
+        error: 'User not found',
+      };
+    }
+    const currentData = this.users[position];
+    console.log(body);
+    const updateUser = {
+      ...currentData,
+      ...body,
+    };
+    this.users[position] = updateUser;
+    return updateUser;
   }
 }
