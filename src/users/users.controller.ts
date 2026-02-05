@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 
 interface User {
   id: string;
@@ -10,17 +11,17 @@ interface User {
 export class UsersController {
   private users: User[] = [
     {
-      id: '1',
+      id: randomUUID(),
       name: 'Juan pa',
       email: 'juanpa@correo.com',
     },
     {
-      id: '2',
+      id: randomUUID(),
       name: 'Sofia',
       email: 'sofi@correo.com',
     },
     {
-      id: '3',
+      id: randomUUID(),
       name: 'Shalom',
       email: 'shaloma@correo.com',
     },
@@ -44,12 +45,14 @@ export class UsersController {
 
   @Post()
   createUser(@Body() body: User) {
-    this.users.push(body);
+    const newUser = {
+      ...body,
+      id: randomUUID(),
+    };
+    this.users.push(newUser);
     return {
       message: 'User created',
-      body: {
-        ...body,
-      },
+      body: newUser,
     };
   }
 
