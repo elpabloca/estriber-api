@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Delete, Put, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Put, Param, Body, ParseUUIDPipe } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
+import type { UUID } from 'node:crypto';
 
 interface User {
   id: string;
@@ -33,7 +34,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  findUser(@Param('id') id: string) {
+  findUser(@Param('id', ParseUUIDPipe) id: UUID) {
     const user = this.users.find((user) => user.id === id);
     console.log(user, 'user');
     if (!user) {
@@ -58,7 +59,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string) {
+  deleteUser(@Param('id', ParseUUIDPipe) id: UUID) {
     const position: number = this.users.findIndex((user) => user.id === id);
     if (position === -1) {
       return {
@@ -72,7 +73,7 @@ export class UsersController {
   }
 
   @Put(':id')
-  updateUser(@Param('id') id: string, @Body() body: Omit<User, 'id'>) {
+  updateUser(@Param('id', ParseUUIDPipe) id: UUID, @Body() body: Omit<User, 'id'>) {
     const position: number = this.users.findIndex((user) => user.id === id);
     console.log(body);
     if (position === -1) {
