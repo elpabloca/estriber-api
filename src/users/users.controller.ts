@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Delete, Put, Param, Body, ParseUUIDPipe } from '@nestjs/common';
-import type { UUID } from 'node:crypto';
+import { Controller, Get, Post, Delete, Put, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
-import type { User } from './user.model';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 @Controller('users')
@@ -9,12 +7,12 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  getUsers(): User[] {
+  getUsers() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  findUser(@Param('id', ParseUUIDPipe) id: UUID) {
+  findUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getUserById(id);
   }
 
@@ -24,12 +22,12 @@ export class UsersController {
   }
 
   @Delete(':id')
-  deleteUser(@Param('id', ParseUUIDPipe) id: UUID) {
+  deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.delete(id);
   }
 
   @Put(':id')
-  updateUser(@Param('id', ParseUUIDPipe) id: UUID, @Body() body: UpdateUserDto) {
+  updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateUserDto) {
     return this.usersService.update(id, body);
   }
 }
