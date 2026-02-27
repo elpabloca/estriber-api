@@ -11,8 +11,8 @@ export class Profile {
   @Column({ type: 'varchar', length: 255, name: 'last_name' })
   lastName: string;
 
-  @Column({ type: 'text', length: 255, nullable: true, name: 'avatar_url' })
-  avatarUrl: string;
+  @Column({ type: 'varchar', length: 255, nullable: true, name: 'avatar' })
+  avatar: string;
 
   @CreateDateColumn({
     type: 'timestamp',
