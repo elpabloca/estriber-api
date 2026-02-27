@@ -25,11 +25,15 @@ export class UsersService {
   }
 
   async create(body: CreateUserDto) {
-    const newUser = await this.usersRepository.save(body);
-    return {
-      message: 'User created',
-      body: newUser,
-    };
+    try {
+      const newUser = await this.usersRepository.save(body);
+      return {
+        message: 'User created',
+        body: newUser,
+      };
+    } catch {
+      throw new ForbiddenException('Error creating user');
+    }
   }
 
   async update(id: number, changes: UpdateUserDto) {
