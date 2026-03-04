@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
@@ -32,7 +32,7 @@ export class UsersService {
         body: newUser,
       };
     } catch {
-      throw new ForbiddenException('Error creating user');
+      throw new BadRequestException('Error creating user');
     }
   }
 
