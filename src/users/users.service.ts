@@ -12,7 +12,9 @@ export class UsersService {
   ) {}
 
   findAll() {
-    const users = this.usersRepository.find();
+    const users = this.usersRepository.find({
+      relations: ['profile'],
+    });
     return users;
   }
 
@@ -22,6 +24,11 @@ export class UsersService {
       throw new ForbiddenException('You are not allowed to access this user');
     }
     return user;
+  }
+
+  async getProfileByUserId(id: number) {
+    const user = await this.findOne(id);
+    return user.profile;
   }
 
   async create(body: CreateUserDto) {
@@ -37,21 +44,32 @@ export class UsersService {
   }
 
   async update(id: number, changes: UpdateUserDto) {
-    const user = await this.findOne(id);
-    const updatedUser = this.usersRepository.merge(user, changes);
-    return this.usersRepository.save(updatedUser);
+    try {
+      const user = await this.findOne(id);
+      const updatedUser = this.usersRepository.merge(user, changes);
+      const savedUser = await this.usersRepository.save(updatedUser);
+      return savedUser;
+    } catch {
+      throw new BadRequestException('Error updating user');
+    }
   }
 
   async delete(id: number) {
-    const user = await this.findOne(id);
-    await this.usersRepository.delete(user.id);
-    return {
-      message: 'User deleted',
-    };
+    try {
+      await this.usersRepository.delete(id);
+      return {
+        message: 'User deleted',
+      };
+    } catch {
+      throw new BadRequestException('Error deleting user');
+    }
   }
 
   private async findOne(id: number) {
-    const user = await this.usersRepository.findOneBy({ id });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['profile'],
+    });
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
