@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Post } from './entities/post.entity';
 
 @Injectable()
 export class PostsService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(
+    @InjectRepository(Post)
+    private postsRepository: Repository<Post>,
+  ) {}
+
+  async findAll() {
+    const posts = await this.postsRepository.find();
+    return posts;
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  async findOne(id: number) {
+    const post = await this.postsRepository.findOne({
+      where: { id },
+    });
+    if (!post) {
+      throw new NotFoundException(`Post with id ${id} not found`);
+    }
+    return post;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async create(body: CreatePostDto) {
+    try {
+      const newPost = await this.postsRepository.save(body);
+      return newPost;
+    } catch {
+      throw new BadRequestException('Error creating post');
+    }
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: number, changes: UpdatePostDto) {
+    try {
+      const post = await this.findOne(id);
+      const updatedPost = this.postsRepository.merge(post, changes);
+      const savedPost = await this.postsRepository.save(updatedPost);
+      return savedPost;
+    } catch {
+      throw new BadRequestException('Error updating post');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: number) {
+    try {
+      await this.postsRepository.delete(id);
+      return { message: 'Post deleted' };
+    } catch {
+      throw new BadRequestException('Error deleting post');
+    }
   }
 }
