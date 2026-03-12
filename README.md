@@ -70,6 +70,20 @@ $ mau deploy
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
+## Migrations with typeorm
+
+If you change something in the databases, you need to generate a new file with that information, you can run
+
+```bash
+$ pnpm run migrations:generate ./src/database/migrations/nameOfMigration
+```
+
+After generating your migrations and have the new file, we can run the migrations
+
+```bash
+$ pnpm run migrations:run
+```
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:
